@@ -108,11 +108,11 @@ https://github.com/openresty/lua-nginx-module
 
 - 主版本
 
-  [点击下载](http://10.38.77.5:8081/repository/raws/chntjstz/zjh/nginx/nginx-1.23.3-2.1-20231205.tar.gz)  [nginx-1.23.3-2.1-20231205.tar.gz](../file/nginx-1.23.3-2.1-20231205.tar.gz) 
+  [nginx-1.23.3-2.1-20231205.tar.gz](../file/nginx-1.23.3-2.1-20231205.tar.gz) 
 
 - centos6操作系统环境（不支持lua脚本）
 
-  [点击下载](http://10.38.77.5:8081/repository/raws/chntjstz/zjh/nginx/nginx-1.23.3-centos6-20230821.tar.gz)  [nginx-1.23.3-centos6-20230821.tar.gz](../file/nginx-1.23.3-centos6-20230821.tar.gz) 
+  [nginx-1.23.3-centos6-20230821.tar.gz](../file/nginx-1.23.3-centos6-20230821.tar.gz) 
 
 #### 6.1.2. 部署包内容
 
@@ -164,9 +164,53 @@ sh agent-shutdown.sh 16666
 
 >[!NOTE]
 >
->nginx1.23.3/conf/nginx.conf文件夹的配置默认自带 `19989` 端口监听，用于nginx代理jar包对nginx程序的指标监控采集，此端口是基于代理jar包默认端口 `18989+1000` ,如果启动agent-start.sh脚本时变更默认端口，需要依照代理jar包启动端口号加1000的原则同步修改nginx.conf配置
+>nginx1.23.3/conf/nginx.conf 文件夹的配置默认自带 `19989` 端口监听，用于nginx代理jar包对nginx程序的指标监控采集，此端口是基于代理jar包默认端口 `18989+1000` ,如果启动 agent-start.sh 脚本时变更默认端口，需要依照代理jar包启动端口号加 1000 的原则同步修改nginx.conf 配置
 >
->  `http {  include mime.types;  default_type application/octet-stream;  #access_log  logs/access.log  main;  vhost_traffic_status_zone;  sendfile on;  #tcp_nopush     on;  #keepalive_timeout  0;  keepalive_timeout 65;  #gzip  on;  server {    #AGENTCREATE;    listen 19989;    server_name localhost;    #charset koi8-r;    #access_log  logs/host.access.log  main;    location / {      #AGENTCREATE type static;      #AGENTCREATE id w5s20fd5;      root html;    }    location /status {      vhost_traffic_status_display;      vhost_traffic_status_display_format html;    }    #location = /50x.html {    #  root html;    #}    #error_page  404              /404.html;    # redirect server error pages to the static page /50x.html    #error_page 500 502 503 504 404 /50x.html;  } }`
+>```nginx
+>http {
+>    include mime.types;
+>    default_type application/octet-stream;
+>
+>    #access_log  logs/access.log  main;
+>    vhost_traffic_status_zone;
+>
+>    sendfile on;
+>
+>    #tcp_nopush     on;
+>    #keepalive_timeout  0;
+>    keepalive_timeout 65;
+>
+>    #gzip  on;
+>
+>    server {
+>        #AGENTCREATE;
+>        listen 19989;
+>        server_name localhost;
+>
+>        #charset koi8-r;
+>        #access_log  logs/host.access.log  main;
+>
+>        location / {
+>            #AGENTCREATE type static;
+>            #AGENTCREATE id w5s20fd5;
+>            root html;
+>        }
+>
+>        location /status {
+>            vhost_traffic_status_display;
+>            vhost_traffic_status_display_format html;
+>        }
+>
+>        #location = /50x.html {
+>        #  root html;
+>        #}
+>
+>        #error_page  404              /404.html;
+>        # redirect server error pages to the static page /50x.html
+>        #error_page 500 502 503 504 404 /50x.html;
+>    }
+>}
+>```
 
 - 纳管
   - 在技术中台我的能力nginx组件控制台中的nginx节点管理中添加部署IP和agent-start.sh的启动端口

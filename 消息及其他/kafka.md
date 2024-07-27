@@ -77,7 +77,7 @@
 
 #### 部署包下载
 
-[点击下载](http://10.38.77.5:8081/repository/raws/chntjstz/zjh/kafka_2.13-3.4.0/kafak 私有虚机版_介质与脚本(kafka_2.13-3.4.0).zip)  [kafak 私有虚机版_介质与脚本(kafka_2.13-3.4.0).zip](../file/kafak 私有虚机版_介质与脚本(kafka_2.13-3.4.0).zip) 
+[kafak 私有虚机版_介质与脚本(kafka_2.13-3.4.0).zip](../file/kafak 私有虚机版_介质与脚本(kafka_2.13-3.4.0).zip) 
 
 #### 基本信息介绍
 
