@@ -1,0 +1,106 @@
+[client]
+port                             = 3306                                                            #告诉mysql客户端，服务端的端口号
+socket                           = /mysqldata/mysql/data/mysql.sock                                #告诉mysql客户端，服务端的sock文件位置
+
+[mysql]
+no_auto_rehash                                                                                     #关闭命令自动补全                                     
+prompt                           ="\u@mysqldb \R:\m:\s [\d]> "                                     #登录数据库后提示符显示时间#5.7.21有效    
+pager                            = "more"                                                          #输出内容分屏显示            
+default-character-set            = utf8mb4                                                         #客户端默认字符集
+
+[mysqld]
+user                             = mysql
+port                             = 3306                                                            #服务端的端口号                                                                 
+server-id                        = 33066990                                                       #服务端集群唯一ID   
+pid_file                         = /mysqldata/mysql/mysql.pid                                          
+secure_file_priv                 = ''
+log_timestamps                   = system                                                          #mysql错误日志当中的时区设置
+character_set_server             = utf8mb4                                                         #数据库默认字符集                  
+collation_server                 = utf8mb4_bin                                                     #字符集排序规则-校对规则   utf8_bin/utf8mb4_bin 区分大小写 /utf8_general_ci ci 不区分大小写 
+lower_case_table_names           = 1                                                               #表名数据库名不区分大小写
+default_authentication_plugin    = mysql_native_password                                           #登录认证插件配置，为了兼容老的客户端
+socket                           = /mysqldata/mysql/data/mysql.sock                                #sock文件位置
+persisted_globals_load           = off                                                             #mysql启动不读取mysqld-auto.cnf文件中的变量，那里默认super_read_only是开起的。                                                                                       
+basedir                          = /usr/local/mysql                                                      
+datadir                          = /mysqldata/mysql/data                                           #数据文件位置  
+tmpdir                           = /mysqldata/mysql/tmpdir                                         #临时文件存储位置                            
+log_error                        = /mysqldata/mysql/data/error.log                                 #错误日志位置
+federated
+
+###slowlog###
+slow_query_log                   = ON
+slow_query_log_file              = /mysqldata/mysql/data/mysql-slow.log                            #慢日志文件位置
+long_query_time                  = 1
+#log_queries_not_using_indexes    = ON                                                             #没有使用索引的sql会被记录，导致慢日志比较大，不开启
+
+###binlog###
+log-bin                          = /mysqldata/mysql/binlogs/mysql-bin.log                          #binlog日志文件位置
+binlog_expire_logs_seconds       = 864000                                                          #设置二进制保留时间为10天，=0 带表不清理binlog 30天-6480000
+max_binlog_size                  = 500M
+binlog_format                    = ROW	
+binlog_rows_query_log_events     = ON                                                              #binlog当中记录SQL语句
+binlog_cache_size                = 128k                                                            #binlog缓存大小
+binlog_stmt_cache_size           = 128k
+max_binlog_cache_size            = 2G                                                              #针对事务语句的binlog缓存大小
+max_binlog_stmt_cache_size       = 2G                                                              #针对非事务语句的binlog缓存大小
+
+###buffer###
+sort_buffer_size                 = 4M  															   #给每个session分配用于排序的buffer大小
+join_buffer_size                 = 4M                                                              #多表关联，为每个join分配4M，buffer
+read_buffer_size                 = 8M                                                              #读入缓冲区大小。对表进行顺序扫描的请求将分配一个读入缓冲区
+read_rnd_buffer_size             = 2M                                                              #随机读缓冲区大小。当按任意顺序读取行时(例如，按照排序顺序)，将分配一个随机读缓存区
+tmp_table_size                   = 200M                                                            #根据内存设置#8G
+max_heap_table_size              = 200M
+max_allowed_packet               = 64M                                                             #设定所接受包的大小,大的插入和更新会受参数限制，导致写入或者更新失败。最大 1073741824
+
+###connection###
+max_connections                  = 3000
+max_connect_errors               = 100000
+skip-ssl                                                                                           #关闭ssl
+skip_name_resolve                = ON                                                              #禁止域名解析   
+table_open_cache                 = 3000
+table_definition_cache           = 3000
+
+###replication###
+read_only                       = ON                                                              #设置普通用户只读
+super_read_only                 = ON                                                              #设置管理用户只读,5.6没有该参数
+log_slave_updates               = ON                                                              #从库设置，开启后记录从库自己的binlog
+skip-slave-start                 = 1                                                               #主从同步线程不随着数据库启动而自动启动
+slave_parallel_type              = LOGICAL_CLOCK                                                   #并行复制类型
+slave_parallel_workers           = 4                                                               #并行SQL线程数
+master_info_repository           = TABLE                                                           #master_info信息存储在系统表当中
+relay_log_info_repository        = TABLE                                                           #relay_log_info信息存储在系统表当中
+relay_log_recovery               = ON                                                              #从库宕机之后是否丢弃之前的relay_log从主库之前已经应用完成的位置拉取binlog。
+innodb_flush_log_at_trx_commit   = 1                                                               #事务每次提交，将redo日志刷盘                        
+sync_binlog                      = 1                                                               #事务每次提交，将binlog日志刷盘
+transaction-isolation            = REPEATABLE-READ
+
+gtid_mode                        = ON
+enforce_gtid_consistency         = ON
+
+###innodb###
+innodb_file_per_table            = 1                                                               #开启独立表空间，为每个innodb表创建一个.ibd文件                       
+innodb_buffer_pool_size          = 20G                                                             #innodb引擎数据缓冲区大小，给50%                                    
+innodb_log_file_size             = 2G                                                              #redo日志文件大小           
+innodb_flush_method              = O_DIRECT
+innodb_open_files                = 65535
+innodb_lock_wait_timeout         = 10
+innodb_io_capacity               = 2000
+innodb_io_capacity_max           = 4000
+innodb_page_cleaners             = 8
+innodb_buffer_pool_instances     = 8
+innodb_log_buffer_size           = 32M                                                             #redo log缓冲池大小
+
+
+sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+#禁用哪些SQL:
+#STRICT_TRANS_TABLES:只要插入数据与字段类型不兼容，则insert操作失败并回滚
+#NO_ZERO_IN_DATE与NO_ZERO_DATE:日期类型年月日不允许为0
+#ERROR_FOR_DIVISION_BY_ZERO：在INSERT或UPDATE过程中，如果数据被零除，则产生错误
+#NO_AUTO_CREATE_USER:授权一个不存在的用户时必须设置密码。---8.0取消了这个
+#NO_ENGINE_SUBSTITUTION:DDL语句指定一个不存在的引擎的时候会报错
+
+
+
+
+
